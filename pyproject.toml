@@ -1,0 +1,41 @@
+[project]
+name = "gtrendscli"
+version = "0.1.0"
+description = "CLI for the Google Trends Research / Health Trends API"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.1",
+    "urllib3>=2.2",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+parquet = ["pyarrow>=16"]
+
+[project.scripts]
+gtrends = "gtrendscli.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gtrendscli"]
+
+# The Agent Skill is authored at the repository root, where it is visible, and
+# mapped into the package at build time so `gtrends skill install` can find it
+# through importlib.resources. Placing it at the wheel's top level instead
+# would claim `skills`, a very common name in site-packages.
+[tool.hatch.build.targets.wheel.force-include]
+"SKILL.md" = "gtrendscli/skills/gtrends/SKILL.md"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not live'"
+markers = [
+    "live: hits the real API; requires TRENDS_API_KEY. Run with -m live",
+]

@@ -1,0 +1,72 @@
+"""Command-line entry point. Groups only — logic lives in `commands/`."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import click
+
+from gtrendscli import __version__
+from gtrendscli.api.client import Client
+from gtrendscli.api.transport import Urllib3Transport
+from gtrendscli.commands.check import check
+from gtrendscli.commands.discover import queries, topics
+from gtrendscli.commands.doctor import doctor
+from gtrendscli.commands.entity import entity
+from gtrendscli.commands.guide import guide
+from gtrendscli.commands.series import series
+from gtrendscli.commands.skill import skill
+from gtrendscli.credentials import CredentialsError, resolve_credential
+
+# Click exits 2 for usage errors, which this tool documents as "API error".
+# Agents are told to branch on these codes, and misreading a flag mistake as a
+# transient API failure invites a pointless retry, so click is brought into
+# line rather than the documentation bent around it.
+click.UsageError.exit_code = 1
+
+
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
+@click.version_option(__version__)
+@click.option("--api-key", help="Overrides $TRENDS_API_KEY and .env.")
+@click.option(
+    "--raw-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    help="Archive every raw response here, for provenance and re-checking.",
+)
+@click.pass_context
+def main(ctx: click.Context, api_key: str | None, raw_dir: Path | None) -> None:
+    r"""Query the Google Trends Research / Health Trends API.
+
+    Values are absolute probabilities, never rescaled:
+
+        value = P(term | date AND geography) x 10,000,000
+
+    This is the allow-listed research API, not the public Trends site: there
+    is no hourly data and no 0-100 index, and access is granted per project.
+
+    \b
+    Run `gtrends doctor` first, and `gtrends guide` for the full manual --
+    units, the date rules, the zero caveat and the exit codes, in one place
+    and with no network needed.
+
+    \b
+    Exit codes: 0 success, 1 usage error (including a date range containing
+    no whole period), 2 API or network error, 3 assertion failure such as
+    `entity verify` finding a different name, 4 warnings under --strict.
+    """
+    # Tests inject a prepared client; only build one otherwise.
+    if ctx.obj is not None:
+        return
+
+    try:
+        credential = resolve_credential(api_key)
+        client = Client(Urllib3Transport(credential.key), raw_dir=raw_dir)
+        client.key_source = credential.source
+        ctx.obj = client
+    except CredentialsError as exc:
+        # Carried rather than raised, so `doctor` can still run and explain it.
+        ctx.obj = exc
+
+
+for command in (guide, doctor, skill, entity, series, queries, topics, check):
+    main.add_command(command)
