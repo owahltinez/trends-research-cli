@@ -1,10 +1,9 @@
 name: Release
 
-# Pushing a vX.Y.Z tag publishes it. The safety is not in ceremony -- it is in
-# the three things below: the tag must match the packaged version, the built
-# wheel must install and run, and the `pypi` environment holds the job for
-# approval before anything is uploaded. PyPI versions are immutable, so a
-# wrong upload cannot be corrected, only abandoned.
+# Pushing a vX.Y.Z tag publishes it, with no manual step. The safety is in the
+# two checks below rather than in ceremony: the tag must match the packaged
+# version, and the built wheel must install and run. PyPI versions are
+# immutable, so a wrong upload cannot be corrected, only abandoned.
 on:
   push:
     tags: ["v*.*.*"]
@@ -14,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'owahltinez/trends-research-cli'
 
-    # Configured on PyPI as a Trusted Publisher. Required reviewers on this
-    # environment are what make a stray `git push --tags` recoverable.
+    # Named in PyPI's Trusted Publisher config, so the OIDC exchange fails
+    # without it. It carries no protection rules: releases are automatic.
     environment:
       name: pypi
       url: https://pypi.org/p/trends-research-cli

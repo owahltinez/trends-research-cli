@@ -40,11 +40,15 @@ git tag v0.1.0 && git push origin v0.1.0
 
 It refuses to upload unless the tag matches the packaged version and the built
 wheel installs and runs -- PyPI versions are immutable, so a wheel missing the
-taxonomy or the skill could never be replaced. The `pypi` environment then
-holds the job for approval, which is what makes a stray `git push --tags`
-recoverable. Upload uses Trusted Publishing via OIDC, so there is no API token
-in repository secrets, and the GitHub Release is created afterwards -- so the
-Releases page never advertises a version that failed to upload.
+taxonomy or the skill could never be replaced. There is no approval step:
+those two checks are the gate. Upload uses Trusted Publishing via OIDC, so
+there is no API token in repository secrets, and the GitHub Release is created
+afterwards -- so the Releases page never advertises a version that failed to
+upload.
+
+The `pypi` environment must keep existing and keep its name: PyPI's Trusted
+Publisher config names it, and the OIDC exchange fails without it. It just has
+no protection rules.
 
 **Before tagging:** bump `__init__.py`, run `uv run pytest -m live` locally --
 it is the only drift alarm, and the release job does not run it -- then tag.
