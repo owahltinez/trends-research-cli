@@ -24,8 +24,8 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v9.0.0
 
       # The version is single-sourced from the package, so a tag that does not
       # match it would publish something other than what the tag claims -- and
