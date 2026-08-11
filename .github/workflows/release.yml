@@ -1,19 +1,21 @@
 name: Release
 
-# Publishing to PyPI is irreversible: a version number can never be reused,
-# even after a delete. So this runs only on a release you deliberately create,
-# and it refuses to publish anything it has not first checked.
+# Pushing a vX.Y.Z tag publishes it. The safety is not in ceremony -- it is in
+# the three things below: the tag must match the packaged version, the built
+# wheel must install and run, and the `pypi` environment holds the job for
+# approval before anything is uploaded. PyPI versions are immutable, so a
+# wrong upload cannot be corrected, only abandoned.
 on:
-  release:
-    types: [published]
+  push:
+    tags: ["v*.*.*"]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     if: github.repository == 'owahltinez/trends-research-cli'
 
-    # Configure this environment on PyPI as a Trusted Publisher, and optionally
-    # add required reviewers here for a second pair of eyes before upload.
+    # Configured on PyPI as a Trusted Publisher. Required reviewers on this
+    # environment are what make a stray `git push --tags` recoverable.
     environment:
       name: pypi
       url: https://pypi.org/p/trends-research-cli
@@ -22,9 +24,14 @@ jobs:
       # Trusted Publishing exchanges this token with PyPI, so there is no API
       # token in repository secrets to leak or rotate.
       id-token: write
+      # To create the GitHub Release once the upload has succeeded.
+      contents: write
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # release notes are generated from history
+
       - uses: astral-sh/setup-uv@v9.0.0
 
       # The version is single-sourced from the package, so a tag that does not
@@ -57,3 +64,10 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: true
+
+      # Done last, so the Releases page never advertises a version that failed
+      # to upload.
+      - name: record the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes dist/*

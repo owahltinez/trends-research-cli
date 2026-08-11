@@ -32,17 +32,24 @@ repository secrets; keeping it local is the safer trade. Run it by hand before
 a release, and whenever you touch anything that encodes API behaviour — it is
 the only thing that catches the API changing under us.
 
-`release.yml` runs when you publish a GitHub Release. It refuses to upload
-unless the tag matches the packaged version and the built wheel installs and
-runs -- PyPI versions are immutable, so a wheel missing the taxonomy or the
-skill could never be replaced. Upload uses PyPI Trusted Publishing via OIDC,
-so there is no API token in repository secrets.
+`release.yml` runs when a `vX.Y.Z` tag is pushed. Releasing is:
 
-**Before the first release:** create the GitHub repository, register
-`owahltinez/trends-research-cli` + the `pypi` environment as a Trusted Publisher on
-PyPI, and run `uv run pytest -m live` locally. Tag as `vX.Y.Z` matching
-`__init__.py`. No repository secrets are needed: the only credential this
-project uses never leaves your machine.
+```sh
+git tag v0.1.0 && git push origin v0.1.0
+```
+
+It refuses to upload unless the tag matches the packaged version and the built
+wheel installs and runs -- PyPI versions are immutable, so a wheel missing the
+taxonomy or the skill could never be replaced. The `pypi` environment then
+holds the job for approval, which is what makes a stray `git push --tags`
+recoverable. Upload uses Trusted Publishing via OIDC, so there is no API token
+in repository secrets, and the GitHub Release is created afterwards -- so the
+Releases page never advertises a version that failed to upload.
+
+**Before tagging:** bump `__init__.py`, run `uv run pytest -m live` locally --
+it is the only drift alarm, and the release job does not run it -- then tag.
+No repository secrets are needed: the only credential this project uses never
+leaves your machine.
 
 ## Checks — all three must pass before you call anything done
 
