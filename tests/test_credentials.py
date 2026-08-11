@@ -6,7 +6,7 @@ the environment is consulted before `gcloud`, not after.
 
 import pytest
 
-from gtrendscli.credentials import (
+from trends_research_cli.credentials import (
     CredentialsError,
     resolve_credential,
     resolve_key,

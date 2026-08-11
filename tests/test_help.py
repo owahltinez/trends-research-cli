@@ -9,7 +9,7 @@ import click
 import pytest
 from click.testing import CliRunner
 
-from gtrendscli.cli import main
+from trends_research_cli.cli import main
 
 RUNNER = CliRunner()
 

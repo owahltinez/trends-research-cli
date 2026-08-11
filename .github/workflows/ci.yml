@@ -52,7 +52,7 @@ jobs:
       # pass every unit test.
       - name: the installed tool runs and carries its data
         run: |
-          uv tool install --from dist/*.whl gtrendscli
+          uv tool install --from dist/*.whl trends-research-cli
           gtrends --version
           gtrends guide > /dev/null
           gtrends categories --show /Health

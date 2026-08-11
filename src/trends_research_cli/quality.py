@@ -12,8 +12,8 @@ import statistics
 from dataclasses import dataclass
 from datetime import date, timedelta
 
-from gtrendscli.dates import ClampResult, DateRange
-from gtrendscli.record import Record
+from trends_research_cli.dates import ClampResult, DateRange
+from trends_research_cli.record import Record
 
 CENSORING_THRESHOLD = 50.0
 """Percent zero above which a series is flagged. Mixing resolutions on a series

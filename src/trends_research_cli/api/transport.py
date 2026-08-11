@@ -13,9 +13,9 @@ from urllib.parse import urlsplit
 
 import urllib3
 
-from gtrendscli.api.client import Response
-from gtrendscli.api.endpoints import Params
-from gtrendscli.api.errors import TransportError
+from trends_research_cli.api.client import Response
+from trends_research_cli.api.endpoints import Params
+from trends_research_cli.api.errors import TransportError
 
 
 class Urllib3Transport:

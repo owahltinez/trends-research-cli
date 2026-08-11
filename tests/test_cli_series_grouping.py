@@ -9,8 +9,8 @@ import pytest
 from click.testing import CliRunner
 from fakes import FakeTransport, timeline_body
 
-from gtrendscli.api.client import Client, Response
-from gtrendscli.cli import main
+from trends_research_cli.api.client import Client, Response
+from trends_research_cli.cli import main
 
 RUNNER = CliRunner()
 
@@ -271,7 +271,9 @@ def test_a_missing_parquet_extra_reports_cleanly(tmp_path, monkeypatch):
     def unavailable(_result, _path):
         raise RuntimeError("parquet output needs the optional extra")
 
-    monkeypatch.setattr("gtrendscli.output.options.write_parquet", unavailable)
+    monkeypatch.setattr(
+        "trends_research_cli.output.options.write_parquet", unavailable
+    )
 
     result, _ = run(
         [

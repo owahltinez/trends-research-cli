@@ -16,8 +16,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from gtrendscli.output.table import render, to_table
-from gtrendscli.record import SCHEMA, By, Record
+from trends_research_cli.output.table import render, to_table
+from trends_research_cli.record import SCHEMA, By, Record
 
 METRIC = "P(term | date AND geo) x 10,000,000"
 

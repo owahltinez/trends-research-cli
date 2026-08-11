@@ -1,5 +1,5 @@
 [project]
-name = "gtrendscli"
+name = "trends-research-cli"
 dynamic = ["version"]
 description = "CLI for the Google Trends Research / Health Trends API, for journalism and OSINT"
 readme = "README.md"
@@ -36,12 +36,12 @@ dependencies = [
 parquet = ["pyarrow>=16"]
 
 [project.scripts]
-gtrends = "gtrendscli.cli:main"
+gtrends = "trends_research_cli.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/owahltinez/gtrendscli"
-Repository = "https://github.com/owahltinez/gtrendscli"
-Issues = "https://github.com/owahltinez/gtrendscli/issues"
+Homepage = "https://github.com/owahltinez/trends-research-cli"
+Repository = "https://github.com/owahltinez/trends-research-cli"
+Issues = "https://github.com/owahltinez/trends-research-cli/issues"
 
 [dependency-groups]
 # pyarrow is an optional runtime extra but a required one for the test suite,
@@ -55,17 +55,17 @@ build-backend = "hatchling.build"
 # One source of truth for the version, so `gtrends --version` cannot drift
 # from the published package.
 [tool.hatch.version]
-path = "src/gtrendscli/__init__.py"
+path = "src/trends_research_cli/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/gtrendscli"]
+packages = ["src/trends_research_cli"]
 
 # The Agent Skill is authored at the repository root, where it is visible, and
 # mapped into the package at build time so `gtrends skill install` can find it
 # through importlib.resources. Placing it at the wheel's top level instead
 # would claim `skills`, a very common name in site-packages.
 [tool.hatch.build.targets.wheel.force-include]
-"SKILL.md" = "gtrendscli/skills/gtrends/SKILL.md"
+"SKILL.md" = "trends_research_cli/skills/gtrends/SKILL.md"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

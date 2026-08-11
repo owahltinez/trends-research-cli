@@ -13,12 +13,12 @@ from datetime import timedelta
 
 import click
 
-from gtrendscli.api.client import Client
-from gtrendscli.api.endpoints import Endpoint, build_params
-from gtrendscli.api.errors import ApiError
-from gtrendscli.api.kgsearch import search
-from gtrendscli.credentials import ACCESS_URL, CredentialsError
-from gtrendscli.dates import DateRange, today_utc
+from trends_research_cli.api.client import Client
+from trends_research_cli.api.endpoints import Endpoint, build_params
+from trends_research_cli.api.errors import ApiError
+from trends_research_cli.api.kgsearch import search
+from trends_research_cli.credentials import ACCESS_URL, CredentialsError
+from trends_research_cli.dates import DateRange, today_utc
 
 
 def _probe_trends(client: Client) -> tuple[bool, str]:

@@ -7,9 +7,9 @@ from datetime import date, timedelta
 
 import click
 
-from gtrendscli import helptext
-from gtrendscli.api.kgsearch import lookup
-from gtrendscli.dates import (
+from trends_research_cli import helptext
+from trends_research_cli.api.kgsearch import lookup
+from trends_research_cli.dates import (
     ClampError,
     DateFormatError,
     DateRange,
@@ -18,12 +18,12 @@ from gtrendscli.dates import (
     parse_range,
     today_utc,
 )
-from gtrendscli.entities import find
-from gtrendscli.exits import AssertionFailure, guard_api
-from gtrendscli.fetching import fetch_timelines
-from gtrendscli.output.table import Table, format_value, render
-from gtrendscli.quality import coverage
-from gtrendscli.session import require_client
+from trends_research_cli.entities import find
+from trends_research_cli.exits import AssertionFailure, guard_api
+from trends_research_cli.fetching import fetch_timelines
+from trends_research_cli.output.table import Table, format_value, render
+from trends_research_cli.quality import coverage
+from trends_research_cli.session import require_client
 
 LOOKBACK_DAYS = 365
 

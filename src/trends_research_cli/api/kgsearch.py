@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from gtrendscli.api.client import Client
+from trends_research_cli.api.client import Client
 
 SEARCH_URL = "https://kgsearch.googleapis.com/v1/entities:search"
 

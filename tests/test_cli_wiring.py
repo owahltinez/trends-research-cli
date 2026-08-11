@@ -11,9 +11,9 @@ import subprocess
 import pytest
 from click.testing import CliRunner
 
-from gtrendscli.api.client import Response
-from gtrendscli.cli import main
-from gtrendscli.credentials import CredentialsError, resolve_credential
+from trends_research_cli.api.client import Response
+from trends_research_cli.cli import main
+from trends_research_cli.credentials import CredentialsError, resolve_credential
 
 RUNNER = CliRunner()
 
@@ -52,7 +52,7 @@ def offline(monkeypatch):
                 },
             )
 
-    monkeypatch.setattr("gtrendscli.cli.Urllib3Transport", Transport)
+    monkeypatch.setattr("trends_research_cli.cli.Urllib3Transport", Transport)
     monkeypatch.setenv("TRENDS_API_KEY", "AIzaSyFAKE")
     return calls
 
@@ -105,7 +105,7 @@ def test_an_explicit_api_key_beats_the_environment(offline, monkeypatch):
         def get(self, url, params):
             return Response(200, {"lines": []})
 
-    monkeypatch.setattr("gtrendscli.cli.Urllib3Transport", Recording)
+    monkeypatch.setattr("trends_research_cli.cli.Urllib3Transport", Recording)
     monkeypatch.setenv("TRENDS_API_KEY", "from-env")
 
     RUNNER.invoke(main, ["--api-key", "from-flag", *SERIES])
@@ -115,7 +115,9 @@ def test_an_explicit_api_key_beats_the_environment(offline, monkeypatch):
 
 def test_a_missing_credential_is_carried_so_doctor_can_explain_it(monkeypatch):
     monkeypatch.delenv("TRENDS_API_KEY", raising=False)
-    monkeypatch.setattr("gtrendscli.cli.resolve_credential", _no_credential)
+    monkeypatch.setattr(
+        "trends_research_cli.cli.resolve_credential", _no_credential
+    )
 
     doctor = RUNNER.invoke(main, ["doctor"])
     series = RUNNER.invoke(main, SERIES)

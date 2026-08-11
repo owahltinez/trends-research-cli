@@ -7,7 +7,7 @@ each status is mapped to the causes actually observed for that endpoint.
 
 from __future__ import annotations
 
-from gtrendscli.api.endpoints import Endpoint, spec_for
+from trends_research_cli.api.endpoints import Endpoint, spec_for
 
 
 class TransportError(RuntimeError):

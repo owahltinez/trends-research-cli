@@ -6,18 +6,18 @@ from pathlib import Path
 
 import click
 
-from gtrendscli import __version__
-from gtrendscli.api.client import Client
-from gtrendscli.api.transport import Urllib3Transport
-from gtrendscli.commands.category import categories
-from gtrendscli.commands.check import check
-from gtrendscli.commands.discover import queries, topics
-from gtrendscli.commands.doctor import doctor
-from gtrendscli.commands.entity import entity
-from gtrendscli.commands.guide import guide
-from gtrendscli.commands.series import series
-from gtrendscli.commands.skill import skill
-from gtrendscli.credentials import CredentialsError, resolve_credential
+from trends_research_cli import __version__
+from trends_research_cli.api.client import Client
+from trends_research_cli.api.transport import Urllib3Transport
+from trends_research_cli.commands.category import categories
+from trends_research_cli.commands.check import check
+from trends_research_cli.commands.discover import queries, topics
+from trends_research_cli.commands.doctor import doctor
+from trends_research_cli.commands.entity import entity
+from trends_research_cli.commands.guide import guide
+from trends_research_cli.commands.series import series
+from trends_research_cli.commands.skill import skill
+from trends_research_cli.credentials import CredentialsError, resolve_credential
 
 # Click exits 2 for usage errors, which this tool documents as "API error".
 # Agents are told to branch on these codes, and misreading a flag mistake as a

@@ -8,8 +8,8 @@ from pathlib import Path
 
 import click
 
-from gtrendscli import helptext
-from gtrendscli.output.result import (
+from trends_research_cli import helptext
+from trends_research_cli.output.result import (
     Result,
     to_csv,
     to_json,

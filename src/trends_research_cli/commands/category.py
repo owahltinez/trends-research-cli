@@ -13,8 +13,8 @@ import json
 
 import click
 
-from gtrendscli import categories as taxonomy
-from gtrendscli.categories import CategoryError
+from trends_research_cli import categories as taxonomy
+from trends_research_cli.categories import CategoryError
 
 VINTAGE_NOTE = (
     "this taxonomy predates about 2012: its newest entries are Blu-Ray "

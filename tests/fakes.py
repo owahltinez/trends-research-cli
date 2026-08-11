@@ -1,6 +1,6 @@
 """Offline stand-ins for the network layer."""
 
-from gtrendscli.api.client import Response
+from trends_research_cli.api.client import Response
 
 
 class FakeTransport:

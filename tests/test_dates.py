@@ -8,7 +8,7 @@ from datetime import date
 
 import pytest
 
-from gtrendscli.dates import (
+from trends_research_cli.dates import (
     ClampError,
     DateFormatError,
     DateRange,

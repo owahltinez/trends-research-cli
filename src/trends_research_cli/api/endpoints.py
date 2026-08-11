@@ -17,7 +17,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 
-from gtrendscli.dates import DateRange, Interval
+from trends_research_cli.dates import DateRange, Interval
 
 BASE_URL = "https://www.googleapis.com/trends/v1beta"
 

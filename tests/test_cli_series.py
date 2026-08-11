@@ -5,8 +5,8 @@ import json
 from click.testing import CliRunner
 from fakes import FakeTransport, timeline_body
 
-from gtrendscli.api.client import Client, Response
-from gtrendscli.cli import main
+from trends_research_cli.api.client import Client, Response
+from trends_research_cli.cli import main
 
 RUNNER = CliRunner()
 

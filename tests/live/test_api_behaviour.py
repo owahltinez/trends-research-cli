@@ -13,8 +13,8 @@ from datetime import UTC, date, datetime, timedelta
 
 import pytest
 
-from gtrendscli.api.endpoints import Endpoint, build_params
-from gtrendscli.dates import DateRange, Interval
+from trends_research_cli.api.endpoints import Endpoint, build_params
+from trends_research_cli.dates import DateRange, Interval
 
 pytestmark = pytest.mark.live
 

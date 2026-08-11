@@ -10,8 +10,8 @@ import pathlib
 
 import pytest
 
-from gtrendscli import categories as module
-from gtrendscli.categories import (
+from trends_research_cli import categories as module
+from trends_research_cli.categories import (
     ALL_CATEGORIES,
     CategoryError,
     children_of,

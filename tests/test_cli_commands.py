@@ -6,10 +6,10 @@ import math
 from click.testing import CliRunner
 from fakes import FakeTransport, timeline_body
 
-from gtrendscli.api.client import Client, Response
-from gtrendscli.cli import main
-from gtrendscli.commands.check import _rank_agreement
-from gtrendscli.credentials import CredentialsError
+from trends_research_cli.api.client import Client, Response
+from trends_research_cli.cli import main
+from trends_research_cli.commands.check import _rank_agreement
+from trends_research_cli.credentials import CredentialsError
 
 RUNNER = CliRunner()
 

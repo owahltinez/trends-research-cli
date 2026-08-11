@@ -6,9 +6,9 @@ one axis varies, so a reader never has to guess what a column means.
 
 from datetime import date
 
-from gtrendscli.output.result import one_line
-from gtrendscli.output.table import format_value, to_table
-from gtrendscli.record import By, Record
+from trends_research_cli.output.result import one_line
+from trends_research_cli.output.table import format_value, to_table
+from trends_research_cli.record import By, Record
 
 
 def daily(day: int, term: str, value: float, group: str = "") -> Record:

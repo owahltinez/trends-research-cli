@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import click
 
-from gtrendscli import helptext
-from gtrendscli.api.client import Client
-from gtrendscli.api.endpoints import PROPERTIES, Endpoint
-from gtrendscli.commands.filters import resolve_category
-from gtrendscli.dates import (
+from trends_research_cli import helptext
+from trends_research_cli.api.client import Client
+from trends_research_cli.api.endpoints import PROPERTIES, Endpoint
+from trends_research_cli.commands.filters import resolve_category
+from trends_research_cli.dates import (
     ClampError,
     DateFormatError,
     DateRange,
@@ -20,20 +20,20 @@ from gtrendscli.dates import (
     parse_years,
     today_utc,
 )
-from gtrendscli.exits import StrictFailure, guard_api
-from gtrendscli.fetching import fetch_regions, fetch_timelines
-from gtrendscli.output import options
-from gtrendscli.output.result import Result, stamp
-from gtrendscli.quality import (
+from trends_research_cli.exits import StrictFailure, guard_api
+from trends_research_cli.fetching import fetch_regions, fetch_timelines
+from trends_research_cli.output import options
+from trends_research_cli.output.result import Result, stamp
+from trends_research_cli.quality import (
     censoring_warnings,
     clamp_warnings,
     coverage,
     freshness_warning,
 )
-from gtrendscli.record import By, Record
-from gtrendscli.session import require_client
-from gtrendscli.summary import SUMMARIES, summarise
-from gtrendscli.terms import free_text_warning
+from trends_research_cli.record import By, Record
+from trends_research_cli.session import require_client
+from trends_research_cli.summary import SUMMARIES, summarise
+from trends_research_cli.terms import free_text_warning
 
 
 def _clamped(span: DateRange, interval: Interval) -> tuple[list, list[str]]:

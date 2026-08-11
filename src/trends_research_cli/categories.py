@@ -69,7 +69,7 @@ def _taxonomy() -> dict:
     release. When Google does change it, regenerate with
     `scripts/fetch_categories.py` and ship a new version.
     """
-    source = resources.files("gtrendscli") / "data" / "categories.json"
+    source = resources.files("trends_research_cli") / "data" / "categories.json"
     return json.loads(source.read_text(encoding="utf-8"))
 
 
@@ -183,7 +183,7 @@ def describe(identifier: int) -> Category:
             f"release (fetched {fetched}). The API answers an unknown "
             f"category with an opaque 500, so it is refused here instead. "
             f"Look one up with `gtrends categories --find <text>`; if Google "
-            f"has added it since, upgrade gtrendscli."
+            f"has added it since, upgrade trends_research_cli."
         )
 
     node = index[identifier]

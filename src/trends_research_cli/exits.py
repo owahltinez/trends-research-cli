@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import click
 
-from gtrendscli.api.errors import ApiError
+from trends_research_cli.api.errors import ApiError
 
 
 class ApiFailure(click.ClickException):

@@ -9,8 +9,8 @@ from datetime import date
 
 import pytest
 
-from gtrendscli.api.endpoints import Endpoint, build_params, build_url
-from gtrendscli.dates import DateRange, Interval
+from trends_research_cli.api.endpoints import Endpoint, build_params, build_url
+from trends_research_cli.dates import DateRange, Interval
 
 JULY = DateRange(date(2026, 7, 1), date(2026, 7, 31))
 

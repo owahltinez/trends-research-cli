@@ -9,10 +9,10 @@ from datetime import date
 
 import click
 
-from gtrendscli import helptext
-from gtrendscli.api.endpoints import Endpoint, build_params
-from gtrendscli.api.parse import parse_index_points
-from gtrendscli.dates import (
+from trends_research_cli import helptext
+from trends_research_cli.api.endpoints import Endpoint, build_params
+from trends_research_cli.api.parse import parse_index_points
+from trends_research_cli.dates import (
     ClampError,
     DateFormatError,
     DateRange,
@@ -21,11 +21,11 @@ from gtrendscli.dates import (
     parse_range,
     today_utc,
 )
-from gtrendscli.exits import guard_api
-from gtrendscli.fetching import fetch_timelines
-from gtrendscli.output.table import Table, format_value, render
-from gtrendscli.quality import clamp_warnings, coverage
-from gtrendscli.session import require_client
+from trends_research_cli.exits import guard_api
+from trends_research_cli.fetching import fetch_timelines
+from trends_research_cli.output.table import Table, format_value, render
+from trends_research_cli.quality import clamp_warnings, coverage
+from trends_research_cli.session import require_client
 
 
 @click.group()

@@ -9,11 +9,11 @@ discard a working entity as nonexistent.
 
 from __future__ import annotations
 
-from gtrendscli.api.client import Client
-from gtrendscli.api.endpoints import Endpoint, build_params
-from gtrendscli.api.kgsearch import Candidate, search
-from gtrendscli.api.parse import parse_items
-from gtrendscli.dates import DateRange
+from trends_research_cli.api.client import Client
+from trends_research_cli.api.endpoints import Endpoint, build_params
+from trends_research_cli.api.kgsearch import Candidate, search
+from trends_research_cli.api.parse import parse_items
+from trends_research_cli.dates import DateRange
 
 
 def _from_topics(

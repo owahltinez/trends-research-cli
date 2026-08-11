@@ -7,12 +7,12 @@ double-normalisation error this tool exists to prevent.
 
 from __future__ import annotations
 
-from gtrendscli.api.client import Client
-from gtrendscli.api.endpoints import Endpoint, build_params
-from gtrendscli.api.parse import parse_regions, parse_timelines
-from gtrendscli.chunking import chunk_periods
-from gtrendscli.dates import DateRange, Interval, Period
-from gtrendscli.record import Record
+from trends_research_cli.api.client import Client
+from trends_research_cli.api.endpoints import Endpoint, build_params
+from trends_research_cli.api.parse import parse_regions, parse_timelines
+from trends_research_cli.chunking import chunk_periods
+from trends_research_cli.dates import DateRange, Interval, Period
+from trends_research_cli.record import Record
 
 
 def fetch_timelines(

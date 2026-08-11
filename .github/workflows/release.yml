@@ -10,13 +10,13 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: github.repository == 'owahltinez/gtrendscli'
+    if: github.repository == 'owahltinez/trends-research-cli'
 
     # Configure this environment on PyPI as a Trusted Publisher, and optionally
     # add required reviewers here for a second pair of eyes before upload.
     environment:
       name: pypi
-      url: https://pypi.org/p/gtrendscli
+      url: https://pypi.org/p/trends-research-cli
 
     permissions:
       # Trusted Publishing exchanges this token with PyPI, so there is no API
@@ -34,7 +34,7 @@ jobs:
         run: |
           tagged="${GITHUB_REF_NAME#v}"
           packaged="$(uv run --no-project --with . python -c \
-            'import importlib.metadata as m; print(m.version("gtrendscli"))')"
+            'import importlib.metadata as m; print(m.version("trends-research-cli"))')"
           echo "tag=$tagged packaged=$packaged"
           test "$tagged" = "$packaged"
 
@@ -47,7 +47,7 @@ jobs:
       # unit test and would ship a broken wheel that can never be replaced.
       - name: the built wheel actually works
         run: |
-          uv tool install --from dist/*.whl gtrendscli
+          uv tool install --from dist/*.whl trends-research-cli
           gtrends --version
           gtrends guide > /dev/null
           gtrends categories --show /Health > /dev/null

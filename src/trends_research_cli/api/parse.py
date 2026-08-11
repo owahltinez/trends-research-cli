@@ -11,8 +11,8 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any
 
-from gtrendscli.dates import DateRange, Interval, period_end
-from gtrendscli.record import Record
+from trends_research_cli.dates import DateRange, Interval, period_end
+from trends_research_cli.record import Record
 
 # Coarser resolutions drop parts of the label: month loses the day,
 # year loses both.

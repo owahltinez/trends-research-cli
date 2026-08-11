@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import click
 
-from gtrendscli.api.client import Client
-from gtrendscli.credentials import CredentialsError
+from trends_research_cli.api.client import Client
+from trends_research_cli.credentials import CredentialsError
 
 
 def require_client(obj: object) -> Client:

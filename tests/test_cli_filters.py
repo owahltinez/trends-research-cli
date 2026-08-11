@@ -10,8 +10,8 @@ import json
 from click.testing import CliRunner
 from fakes import FakeTransport
 
-from gtrendscli.api.client import Client, Response
-from gtrendscli.cli import main
+from trends_research_cli.api.client import Client, Response
+from trends_research_cli.cli import main
 
 RUNNER = CliRunner()
 
@@ -184,7 +184,7 @@ def test_a_numeric_id_is_validated_like_a_path():
 
     assert result.exit_code == 1
     assert "not in the taxonomy" in result.output
-    assert "upgrade gtrendscli" in result.output, (
+    assert "upgrade trends_research_cli" in result.output, (
         "and says how to fix a stale copy"
     )
     assert transport.calls == []

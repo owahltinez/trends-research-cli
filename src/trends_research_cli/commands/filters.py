@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import click
 
-from gtrendscli import categories as taxonomy
-from gtrendscli.categories import CategoryError
+from trends_research_cli import categories as taxonomy
+from trends_research_cli.categories import CategoryError
 
 
 def resolve_category(

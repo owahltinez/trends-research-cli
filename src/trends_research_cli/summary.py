@@ -10,7 +10,7 @@ from __future__ import annotations
 import statistics
 from collections.abc import Callable, Sequence
 
-from gtrendscli.record import Record
+from trends_research_cli.record import Record
 
 SUMMARIES: dict[str, Callable[[Sequence[float]], float]] = {
     "mean": statistics.fmean,

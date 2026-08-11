@@ -1,12 +1,13 @@
-# gtrendscli
+# trends-research-cli
 
-[![CI](https://github.com/owahltinez/gtrendscli/actions/workflows/ci.yml/badge.svg)](https://github.com/owahltinez/gtrendscli/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/gtrendscli.svg)](https://pypi.org/project/gtrendscli/)
-[![Python](https://img.shields.io/pypi/pyversions/gtrendscli.svg)](https://pypi.org/project/gtrendscli/)
-[![License](https://img.shields.io/pypi/l/gtrendscli.svg)](LICENSE)
+[![CI](https://github.com/owahltinez/trends-research-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/owahltinez/trends-research-cli/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/trends-research-cli.svg)](https://pypi.org/project/trends-research-cli/)
+[![Python](https://img.shields.io/pypi/pyversions/trends-research-cli.svg)](https://pypi.org/project/trends-research-cli/)
+[![License](https://img.shields.io/pypi/l/trends-research-cli.svg)](LICENSE)
 
-A CLI for the **Google Trends Research / Health Trends API**, aimed at
-journalism and OSINT work.
+A CLI for the **Google Trends Research API** — the allow-listed research
+endpoint, not the public Trends site — aimed at journalism and OSINT work.
+Installs a `gtrends` command.
 
 This wraps the allow-listed research API, **not** the public Trends site. It
 returns absolute probabilities rather than the familiar 0–100 index, it has no
@@ -27,7 +28,7 @@ those tests fail rather than the numbers quietly going wrong.
 ## Install
 
 ```sh
-uv tool install gtrendscli     # or: pipx install gtrendscli
+uv tool install trends-research-cli     # or: pipx install trends-research-cli
 export TRENDS_API_KEY=...      # or put it in a .env file
 gtrends doctor                 # checks the key and the allow-listing
 gtrends guide                  # the full manual, offline
@@ -90,7 +91,7 @@ Cursor, Gemini CLI, Copilot and others. It ships with the package, but
 installing the CLI does not put it where agents look, so:
 
 ```sh
-uv tool install gtrendscli
+uv tool install trends-research-cli
 gtrends skill install          # ~/.agents/skills, the cross-tool location
 gtrends skill install --all    # plus every agent tool found on this machine
 gtrends skill install --to .agents/skills   # this repository only
@@ -267,7 +268,7 @@ No hourly data (the API has none). No forecasting, modelling or plotting.
 ## Development
 
 ```sh
-git clone https://github.com/owahltinez/gtrendscli && cd gtrendscli
+git clone https://github.com/owahltinez/trends-research-cli && cd trends-research-cli
 uv sync
 uv run pytest                  # offline; fast, no network
 uv run pytest -m live          # also hits the real API; needs TRENDS_API_KEY
@@ -285,7 +286,7 @@ against a single allow-listed key, so it runs on a schedule instead.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). `src/gtrendscli/data/categories.json` contains
+MIT — see [LICENSE](LICENSE). `src/trends_research_cli/data/categories.json` contains
 Google Trends category names and IDs, retrieved from the public Trends category
 picker and bundled so `--category` can be validated offline; its provenance is
 recorded in the file.

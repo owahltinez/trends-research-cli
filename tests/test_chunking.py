@@ -4,8 +4,8 @@ from datetime import date
 
 import pytest
 
-from gtrendscli.chunking import chunk_periods
-from gtrendscli.dates import DateRange, Interval, clamp
+from trends_research_cli.chunking import chunk_periods
+from trends_research_cli.dates import DateRange, Interval, clamp
 
 
 def periods(start: date, end: date, interval=Interval.DAY):

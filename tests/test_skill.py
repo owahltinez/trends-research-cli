@@ -13,8 +13,8 @@ import pytest
 import tomllib
 from click.testing import CliRunner
 
-from gtrendscli.cli import main
-from gtrendscli.commands.skill import SKILL_NAME, packaged_skill
+from trends_research_cli.cli import main
+from trends_research_cli.commands.skill import SKILL_NAME, packaged_skill
 
 REPO = Path(__file__).resolve().parent.parent
 SKILL = REPO / "SKILL.md"
@@ -128,9 +128,9 @@ def test_the_root_skill_is_mapped_into_the_package_at_build_time():
     config = tomllib.loads((REPO / "pyproject.toml").read_text())
     wheel = config["tool"]["hatch"]["build"]["targets"]["wheel"]
 
-    assert wheel["packages"] == ["src/gtrendscli"]
+    assert wheel["packages"] == ["src/trends_research_cli"]
     assert wheel["force-include"] == {
-        "SKILL.md": "gtrendscli/skills/gtrends/SKILL.md"
+        "SKILL.md": "trends_research_cli/skills/gtrends/SKILL.md"
     }
     assert SKILL.parent == REPO, "authored at the repository root"
 

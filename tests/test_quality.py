@@ -4,12 +4,12 @@ from datetime import date, timedelta
 
 import pytest
 
-from gtrendscli.quality import (
+from trends_research_cli.quality import (
     censoring_warnings,
     coverage,
     freshness_warning,
 )
-from gtrendscli.record import Record
+from trends_research_cli.record import Record
 
 START = date(2026, 7, 1)
 

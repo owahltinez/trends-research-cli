@@ -29,7 +29,8 @@ from pathlib import Path
 
 SOURCE = "https://trends.google.com/trends/api/explore/pickers/category"
 TARGET = (
-    Path(__file__).resolve().parents[1] / "src/gtrendscli/data/categories.json"
+    Path(__file__).resolve().parents[1]
+    / "src/trends_research_cli/data/categories.json"
 )
 
 # Google prefixes its JSON responses with an anti-hijacking guard.
@@ -44,7 +45,7 @@ def count(node: dict) -> int:
 def main() -> None:
     """Fetch the taxonomy and overwrite the vendored copy."""
     request = urllib.request.Request(
-        f"{SOURCE}?hl=en-US&tz=0", headers={"User-Agent": "gtrendscli"}
+        f"{SOURCE}?hl=en-US&tz=0", headers={"User-Agent": "trends_research_cli"}
     )
     with urllib.request.urlopen(request, timeout=30) as response:
         body = response.read().decode()

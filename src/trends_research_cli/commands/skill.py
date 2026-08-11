@@ -46,7 +46,12 @@ def packaged_skill() -> Path:
     real installs, the repository path when running from source.
     """
     packaged = Path(
-        str(resources.files("gtrendscli") / "skills" / SKILL_NAME / "SKILL.md")
+        str(
+            resources.files("trends_research_cli")
+            / "skills"
+            / SKILL_NAME
+            / "SKILL.md"
+        )
     )
     if packaged.is_file():
         return packaged

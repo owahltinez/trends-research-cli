@@ -39,7 +39,7 @@ skill could never be replaced. Upload uses PyPI Trusted Publishing via OIDC,
 so there is no API token in repository secrets.
 
 **Before the first release:** create the GitHub repository, register
-`owahltinez/gtrendscli` + the `pypi` environment as a Trusted Publisher on
+`owahltinez/trends-research-cli` + the `pypi` environment as a Trusted Publisher on
 PyPI, and run `uv run pytest -m live` locally. Tag as `vX.Y.Z` matching
 `__init__.py`. No repository secrets are needed: the only credential this
 project uses never leaves your machine.
@@ -106,7 +106,7 @@ assertion that it is covered.
 
 `SKILL.md` follows the open [Agent Skills](https://agentskills.io)
 spec. It is authored at the repository root, where it is visible, and
-`force-include` in pyproject maps it to `gtrendscli/skills/gtrends/SKILL.md`
+`force-include` in pyproject maps it to `trends_research_cli/skills/gtrends/SKILL.md`
 inside the wheel so `importlib.resources` can find it after install. One copy,
 two locations that both have to resolve — `packaged_skill()` checks the wheel
 path then the checkout.
@@ -125,7 +125,7 @@ Keep it thin. It routes to `gtrends guide`; it does not restate it.
 
 ## Vendored data
 
-`src/gtrendscli/data/categories.json` is the Google Trends category taxonomy,
+`src/trends_research_cli/data/categories.json` is the Google Trends category taxonomy,
 shipped with the release and never fetched at runtime. It gained one category
 in the seven years to 2026, so a refresh path would be a network fetch, a cache
 and its failure modes in exchange for something that happens less often than a

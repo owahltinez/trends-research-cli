@@ -9,8 +9,8 @@ import json
 import pytest
 from fakes import FakeTransport
 
-from gtrendscli.api.client import ApiError, Client, Response
-from gtrendscli.api.endpoints import Endpoint
+from trends_research_cli.api.client import ApiError, Client, Response
+from trends_research_cli.api.endpoints import Endpoint
 
 PARAMS = [("term", "flu"), ("restrictions.geo", "US")]
 

@@ -11,11 +11,11 @@ import json
 
 import click
 
-from gtrendscli import helptext
-from gtrendscli.api.endpoints import PROPERTIES, Endpoint, build_params
-from gtrendscli.api.parse import parse_items
-from gtrendscli.commands.filters import resolve_category
-from gtrendscli.dates import (
+from trends_research_cli import helptext
+from trends_research_cli.api.endpoints import PROPERTIES, Endpoint, build_params
+from trends_research_cli.api.parse import parse_items
+from trends_research_cli.commands.filters import resolve_category
+from trends_research_cli.dates import (
     ClampError,
     DateFormatError,
     DateRange,
@@ -24,12 +24,12 @@ from gtrendscli.dates import (
     parse_range,
     today_utc,
 )
-from gtrendscli.exits import guard_api
-from gtrendscli.output.result import one_line
-from gtrendscli.output.table import Table, render
-from gtrendscli.quality import clamp_warnings, freshness_warning
-from gtrendscli.session import require_client
-from gtrendscli.terms import free_text_warning
+from trends_research_cli.exits import guard_api
+from trends_research_cli.output.result import one_line
+from trends_research_cli.output.table import Table, render
+from trends_research_cli.quality import clamp_warnings, freshness_warning
+from trends_research_cli.session import require_client
+from trends_research_cli.terms import free_text_warning
 
 MONTH_NOTE = (
     "month granularity is a hard API limit here: this covers whole months, so "

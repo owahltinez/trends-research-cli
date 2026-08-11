@@ -9,8 +9,8 @@ from datetime import date
 
 import pytest
 
-from gtrendscli.api.parse import parse_timelines
-from gtrendscli.dates import Interval
+from trends_research_cli.api.parse import parse_timelines
+from trends_research_cli.dates import Interval
 
 
 def body(points: list[tuple[str, float]], term: str = "flu") -> dict:

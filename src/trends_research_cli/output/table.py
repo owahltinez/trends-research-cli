@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from gtrendscli.record import SCHEMA, By, Record
+from trends_research_cli.record import SCHEMA, By, Record
 
 
 @dataclass(frozen=True)

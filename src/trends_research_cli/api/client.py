@@ -14,8 +14,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, NamedTuple, Protocol
 
-from gtrendscli.api.endpoints import Endpoint, Params, build_url
-from gtrendscli.api.errors import ApiError, TransportError, diagnose
+from trends_research_cli.api.endpoints import Endpoint, Params, build_url
+from trends_research_cli.api.errors import ApiError, TransportError, diagnose
 
 # Transient statuses worth another attempt. 500 is deliberately absent: this
 # API answers a caller error with 500, so retrying would hammer it over a typo.

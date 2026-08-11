@@ -9,7 +9,7 @@ exists to prevent.
 
 from __future__ import annotations
 
-from gtrendscli.dates import DateRange, Period
+from trends_research_cli.dates import DateRange, Period
 
 MAX_POINTS = 380
 """Conservative end of the observed 380-430 ceiling."""

@@ -16,7 +16,7 @@ import urllib.request
 import pytest
 from dotenv import load_dotenv
 
-from gtrendscli.api.endpoints import build_url
+from trends_research_cli.api.endpoints import build_url
 
 
 @pytest.fixture(scope="session")

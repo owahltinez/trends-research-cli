@@ -10,10 +10,10 @@ import json
 import pytest
 import urllib3
 
-from gtrendscli.api.client import Client
-from gtrendscli.api.endpoints import Endpoint
-from gtrendscli.api.errors import ApiError, TransportError
-from gtrendscli.api.transport import Urllib3Transport
+from trends_research_cli.api.client import Client
+from trends_research_cli.api.endpoints import Endpoint
+from trends_research_cli.api.errors import ApiError, TransportError
+from trends_research_cli.api.transport import Urllib3Transport
 
 KEY = "AIzaSyNOT-A-REAL-KEY-0123456789"
 URL = "https://www.googleapis.com/trends/v1beta/regions"
