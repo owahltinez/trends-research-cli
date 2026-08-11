@@ -121,3 +121,14 @@ def test_the_guide_needs_no_network_or_credentials():
 
     assert result.exit_code == 0
     assert len(result.output.splitlines()) > 80
+
+
+@pytest.mark.parametrize("path", ALL_PATHS, ids=label)
+def test_no_help_text_leaks_a_literal_paragraph_marker(path):
+    r"""Click's `\b` is an ASCII backspace, not two characters.
+
+    A raw docstring turns the marker into visible text on the first screen a
+    user ever sees, and rewraps the paragraph it was meant to protect. This
+    file is a contract and it missed exactly that once.
+    """
+    assert "\\b" not in help_for(path)

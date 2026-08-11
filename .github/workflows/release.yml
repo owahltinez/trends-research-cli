@@ -1,0 +1,59 @@
+name: Release
+
+# Publishing to PyPI is irreversible: a version number can never be reused,
+# even after a delete. So this runs only on a release you deliberately create,
+# and it refuses to publish anything it has not first checked.
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.repository == 'owahltinez/gtrendscli'
+
+    # Configure this environment on PyPI as a Trusted Publisher, and optionally
+    # add required reviewers here for a second pair of eyes before upload.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/gtrendscli
+
+    permissions:
+      # Trusted Publishing exchanges this token with PyPI, so there is no API
+      # token in repository secrets to leak or rotate.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      # The version is single-sourced from the package, so a tag that does not
+      # match it would publish something other than what the tag claims -- and
+      # the wrong number could not then be corrected.
+      - name: the tag matches the packaged version
+        run: |
+          tagged="${GITHUB_REF_NAME#v}"
+          packaged="$(uv run --no-project --with . python -c \
+            'import importlib.metadata as m; print(m.version("gtrendscli"))')"
+          echo "tag=$tagged packaged=$packaged"
+          test "$tagged" = "$packaged"
+
+      - run: uv sync
+      - run: uv run pytest -q
+
+      - run: uv build
+
+      # The taxonomy and the skill are bundled data. Losing either passes every
+      # unit test and would ship a broken wheel that can never be replaced.
+      - name: the built wheel actually works
+        run: |
+          uv tool install --from dist/*.whl gtrendscli
+          gtrends --version
+          gtrends guide > /dev/null
+          gtrends categories --show /Health > /dev/null
+          gtrends skill install --to "$RUNNER_TEMP/skills"
+          test -f "$RUNNER_TEMP/skills/gtrends/SKILL.md"
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: true

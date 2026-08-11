@@ -1,12 +1,23 @@
 # gtrendscli
 
+[![CI](https://github.com/owahltinez/gtrendscli/actions/workflows/ci.yml/badge.svg)](https://github.com/owahltinez/gtrendscli/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/gtrendscli.svg)](https://pypi.org/project/gtrendscli/)
+[![Python](https://img.shields.io/pypi/pyversions/gtrendscli.svg)](https://pypi.org/project/gtrendscli/)
+[![License](https://img.shields.io/pypi/l/gtrendscli.svg)](LICENSE)
+
 A CLI for the **Google Trends Research / Health Trends API**, aimed at
 journalism and OSINT work.
 
 This wraps the allow-listed research API, **not** the public Trends site. It
 returns absolute probabilities rather than the familiar 0–100 index, it has no
-hourly data, and access must be granted per project. Run `gtrends doctor` first
-— it tells you which of those is stopping you.
+hourly data, and access must be granted per project.
+
+> **You need an API key, and you cannot create one yourself.** This API is
+> allow-listed per Google Cloud project and granted after review. Request
+> access at
+> [support.google.com/trends/contact/trends_api](https://support.google.com/trends/contact/trends_api).
+> Without a key, `gtrends guide` and `gtrends categories` still work offline;
+> nothing else will.
 
 The API's real behaviour is largely undocumented, and most of it is a trap.
 What this tool knows about it is recorded in the module docstrings and asserted
@@ -16,10 +27,14 @@ those tests fail rather than the numbers quietly going wrong.
 ## Install
 
 ```sh
-uv sync
-cp .env.example .env   # then fill in TRENDS_API_KEY
-gtrends doctor
+uv tool install gtrendscli     # or: pipx install gtrendscli
+export TRENDS_API_KEY=...      # or put it in a .env file
+gtrends doctor                 # checks the key and the allow-listing
+gtrends guide                  # the full manual, offline
 ```
+
+`doctor` is worth running first: the API reports "your key is bad" and "your
+project is not allow-listed" identically, and `doctor` tells them apart.
 
 ## The unit
 
@@ -235,6 +250,8 @@ small non-zero value down to `0.0`.
 
 ## Exit codes
 
+| Code | Meaning |
+|---|---|
 | 0 | success |
 | 1 | usage error: bad flags, unparseable dates, clamp violation |
 | 2 | API or network error after retries |
@@ -247,15 +264,28 @@ No p-values, no significance tests, no verdicts — the tool returns
 well-labelled numbers with their coverage caveats and you run your own test.
 No hourly data (the API has none). No forecasting, modelling or plotting.
 
-## Test
+## Development
 
 ```sh
-uv run pytest              # offline; fast, no network
-uv run pytest -m live      # also hits the real API; needs TRENDS_API_KEY
-readability check src tests --fix
+git clone https://github.com/owahltinez/gtrendscli && cd gtrendscli
+uv sync
+uv run pytest                  # offline; fast, no network
+uv run pytest -m live          # also hits the real API; needs TRENDS_API_KEY
 ```
 
 The live suite is the project's documentation of the API itself: it asserts
 every undocumented behaviour this tool relies on — the parameter families, the
 calendar-period bleeding, the point ceiling, the UTC binning and data horizon —
-against the real service.
+against the real service. [AGENTS.md](AGENTS.md) is the contributor guide: the
+checks, the design invariants, and the rule that no belief about the API is
+encoded without a live test behind it.
+
+Pull requests run the offline suite only — the live suite spends real quota
+against a single allow-listed key, so it runs on a schedule instead.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE). `src/gtrendscli/data/categories.json` contains
+Google Trends category names and IDs, retrieved from the public Trends category
+picker and bundled so `--category` can be validated offline; its provenance is
+recorded in the file.

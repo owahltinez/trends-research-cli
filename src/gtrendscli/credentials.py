@@ -18,10 +18,14 @@ from dotenv import load_dotenv
 
 ENV_VAR = "TRENDS_API_KEY"
 
+ACCESS_URL = "https://support.google.com/trends/contact/trends_api"
+"""Where to apply. This API is allow-listed, so a key cannot just be created."""
+
 _GUIDANCE = (
-    f"no API key found. Set ${ENV_VAR}, put it in .env, pass --api-key, or "
-    "authenticate with `gcloud auth login`. Run `gtrends doctor` to check "
-    "whether the key you have is allow-listed for this API."
+    f"no API key found. This API is allow-listed per Google Cloud project, so "
+    f"a key has to be requested at {ACCESS_URL} -- it cannot be created in the "
+    f"console. Once you have one, set ${ENV_VAR}, put it in .env, pass "
+    f"--api-key, or authenticate with `gcloud auth login`."
 )
 
 

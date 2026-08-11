@@ -41,14 +41,22 @@ def test_a_failing_gcloud_is_reported_as_no_credentials():
         resolve_key(None, env={}, gcloud=boom)
 
 
-def test_the_guidance_says_how_to_fix_it():
-    """The commonest first-run failure; the message has to be actionable."""
+def test_the_guidance_says_how_to_obtain_a_key_not_just_supply_one():
+    """The commonest first-run failure, and the one place a stranger looks.
+
+    Listing four ways to supply a key is useless for an allow-listed API that
+    will not issue one without an application, so the request URL is the part
+    that has to be here. It must not say "run `gtrends doctor`" either, since
+    `doctor` is usually what printed it.
+    """
     with pytest.raises(CredentialsError) as caught:
         resolve_key(None, env={}, gcloud=lambda: None)
 
     message = str(caught.value)
     assert "TRENDS_API_KEY" in message
-    assert "gtrends doctor" in message
+    assert "support.google.com/trends/contact/trends_api" in message
+    assert "allow-listed" in message
+    assert "gtrends doctor" not in message
 
 
 def test_a_resolved_key_is_never_put_in_the_source_label():

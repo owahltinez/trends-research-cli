@@ -5,6 +5,7 @@ import io
 import json
 from datetime import date
 
+import pytest
 from click.testing import CliRunner
 from fakes import FakeTransport, timeline_body
 
@@ -358,7 +359,7 @@ def test_years_given_out_of_order_still_produce_a_forward_span():
 def test_parquet_carries_the_warnings_and_says_where_it_wrote(tmp_path):
     """A silent exit 0 on a censored series is the failure this tool exists
     to prevent, so writing a file must not swallow the caveats."""
-    pyarrow = __import__("pyarrow.parquet", fromlist=["parquet"])
+    pyarrow = pytest.importorskip("pyarrow.parquet")
     target = tmp_path / "out.parquet"
 
     result, _ = run(

@@ -14,10 +14,13 @@ gtrends — Google Trends Research / Health Trends API
 
 WHAT THIS IS
   The allow-listed research API, not the public Trends site. No hourly data,
-  no 0-100 index, and access is granted per Google Cloud project. If requests
-  are rejected, run `gtrends doctor` -- it distinguishes "not allow-listed"
-  from "bad key" from "Knowledge Graph API not enabled", which the API itself
-  reports identically.
+  no 0-100 index, and access is granted per Google Cloud project.
+
+  A key cannot be created in the Cloud console; it is requested at
+  https://support.google.com/trends/contact/trends_api and granted after
+  review. If requests are rejected, run `gtrends doctor` -- it distinguishes
+  "not allow-listed" from "bad key" from "Knowledge Graph API not enabled",
+  which the API itself reports identically.
 
 THE UNIT
   value = P(term | date AND geography) x 10,000,000

@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      # The offline suite needs no credentials, so this runs on forks and
+      # pull requests exactly as it does here.
+      - run: uv sync --python ${{ matrix.python }}
+      - run: uv run pytest -q
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv tool install readability-cli
+      - run: readability check src tests scripts
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      - run: uv build
+
+      # A wheel that builds is not the same as a wheel that works: the skill
+      # and the category taxonomy are bundled data, and losing either would
+      # pass every unit test.
+      - name: the installed tool runs and carries its data
+        run: |
+          uv tool install --from dist/*.whl gtrendscli
+          gtrends --version
+          gtrends guide > /dev/null
+          gtrends categories --show /Health

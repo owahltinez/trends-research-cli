@@ -26,7 +26,25 @@ from gtrendscli.credentials import CredentialsError, resolve_credential
 click.UsageError.exit_code = 1
 
 
-@click.group(context_settings={"help_option_names": ["-h", "--help"]})
+# These blocks need their line breaks kept, which is what Click's \b marker
+# does. They live in the epilog rather than the docstring because the marker
+# is an ASCII backspace: a docstring holding one has to be non-raw, and a
+# non-raw docstring containing a backslash is exactly what the linter objects
+# to. An epilog is an ordinary string, so both can be satisfied.
+EPILOG = """\b
+Run `gtrends doctor` first, and `gtrends guide` for the full manual -- units,
+the date rules, the zero caveat and the exit codes, in one place and with no
+network needed.
+
+\b
+Exit codes: 0 success, 1 usage error (including a date range containing no
+whole period), 2 API or network error, 3 assertion failure such as `entity
+verify` finding a different name, 4 warnings under --strict."""
+
+
+@click.group(
+    context_settings={"help_option_names": ["-h", "--help"]}, epilog=EPILOG
+)
 @click.version_option(__version__)
 @click.option("--api-key", help="Overrides $TRENDS_API_KEY and .env.")
 @click.option(
@@ -36,7 +54,7 @@ click.UsageError.exit_code = 1
 )
 @click.pass_context
 def main(ctx: click.Context, api_key: str | None, raw_dir: Path | None) -> None:
-    r"""Query the Google Trends Research / Health Trends API.
+    """Query the Google Trends Research / Health Trends API.
 
     Values are absolute probabilities, never rescaled:
 
@@ -44,16 +62,8 @@ def main(ctx: click.Context, api_key: str | None, raw_dir: Path | None) -> None:
 
     This is the allow-listed research API, not the public Trends site: there
     is no hourly data and no 0-100 index, and access is granted per project.
-
-    \b
-    Run `gtrends doctor` first, and `gtrends guide` for the full manual --
-    units, the date rules, the zero caveat and the exit codes, in one place
-    and with no network needed.
-
-    \b
-    Exit codes: 0 success, 1 usage error (including a date range containing
-    no whole period), 2 API or network error, 3 assertion failure such as
-    `entity verify` finding a different name, 4 warnings under --strict.
+    A key is requested at https://support.google.com/trends/contact/trends_api
+    -- it cannot be created in the Cloud console.
     """
     # Tests inject a prepared client; only build one otherwise.
     if ctx.obj is not None:

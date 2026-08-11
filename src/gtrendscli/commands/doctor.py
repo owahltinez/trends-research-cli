@@ -17,10 +17,8 @@ from gtrendscli.api.client import Client
 from gtrendscli.api.endpoints import Endpoint, build_params
 from gtrendscli.api.errors import ApiError
 from gtrendscli.api.kgsearch import search
-from gtrendscli.credentials import CredentialsError
+from gtrendscli.credentials import ACCESS_URL, CredentialsError
 from gtrendscli.dates import DateRange, today_utc
-
-ACCESS_URL = "https://support.google.com/trends/contact/trends_api"
 
 
 def _probe_trends(client: Client) -> tuple[bool, str]:

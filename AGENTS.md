@@ -6,9 +6,43 @@ rather than develop it, see `SKILL.md` or run `gtrends guide`.
 ## Setup
 
 ```sh
-uv sync                     # add --extra parquet for Parquet output
+uv sync                     # dev group includes pyarrow, so the suite is green
 cp .env.example .env        # then fill in TRENDS_API_KEY
 ```
+
+`--extra parquet` is the *end user's* way to get `--parquet` output; a checkout
+does not need it.
+
+**The live tests need a key you may not have.** This API is allow-listed per
+Google Cloud project and granted after review — request access at
+<https://support.google.com/trends/contact/trends_api>; it cannot be created in
+the Cloud console. Without one, `uv run pytest` still passes in full: the live
+suite skips itself. Say so in a pull request if your change depends on API
+behaviour you could not verify, and describe what you expect.
+
+## CI/CD
+
+`ci.yml` runs on every push and pull request: the offline suite on 3.11-3.13,
+the linter, and a wheel build that installs the tool and checks its bundled
+data survived. It needs no secrets, so it works on forks.
+
+The live suite is deliberately **not** in CI. It spends real quota against one
+allow-listed key, and running it there would mean putting that key in
+repository secrets; keeping it local is the safer trade. Run it by hand before
+a release, and whenever you touch anything that encodes API behaviour — it is
+the only thing that catches the API changing under us.
+
+`release.yml` runs when you publish a GitHub Release. It refuses to upload
+unless the tag matches the packaged version and the built wheel installs and
+runs -- PyPI versions are immutable, so a wheel missing the taxonomy or the
+skill could never be replaced. Upload uses PyPI Trusted Publishing via OIDC,
+so there is no API token in repository secrets.
+
+**Before the first release:** create the GitHub repository, register
+`owahltinez/gtrendscli` + the `pypi` environment as a Trusted Publisher on
+PyPI, and run `uv run pytest -m live` locally. Tag as `vX.Y.Z` matching
+`__init__.py`. No repository secrets are needed: the only credential this
+project uses never leaves your machine.
 
 ## Checks — all three must pass before you call anything done
 
