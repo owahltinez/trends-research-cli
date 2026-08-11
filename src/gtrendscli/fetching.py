@@ -44,7 +44,13 @@ def fetch_timelines(
 
 
 def fetch_regions(
-    client: Client, *, terms: list[str], geo: str, span: DateRange
+    client: Client,
+    *,
+    terms: list[str],
+    geo: str,
+    span: DateRange,
+    category: int | None = None,
+    trends_property: str | None = None,
 ) -> list[Record]:
     """Fetch one value per sub-region, per term.
 
@@ -56,7 +62,14 @@ def fetch_regions(
     for term in terms:
         body = client.fetch(
             Endpoint.REGIONS,
-            build_params(Endpoint.REGIONS, terms=[term], geo=geo, span=span),
+            build_params(
+                Endpoint.REGIONS,
+                terms=[term],
+                geo=geo,
+                span=span,
+                category=category,
+                trends_property=trends_property,
+            ),
         )
         records.extend(parse_regions(body, term=term, span=span))
 

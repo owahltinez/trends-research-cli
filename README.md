@@ -112,6 +112,7 @@ gtrends series -h      # flags and an example for one command
 ```sh
 gtrends guide                    # the full manual, offline
 gtrends doctor                   # is my setup working?
+gtrends categories               # look up a category for --category
 gtrends entity find|verify|coverage
 gtrends series <id...>           # the numbers
 gtrends queries <id>             # what strings people typed alongside
@@ -138,6 +139,34 @@ bridging factor, because the values are absolute.
 `--geo` takes a country (`US`), a sub-national region (`US-NY`) or a bare
 Nielsen DMA number (`501` for the New York media market). Up to 30 terms per
 request; requests are throttled to the documented 2 per second.
+
+### Category and property
+
+```sh
+gtrends categories --find health
+gtrends queries /m/0cycc --geo US --from 2025-07 --property news
+gtrends series /m/0cycc --geo US --from 2025-01 --to 2025-03 --by region \
+    --category "/Health/Health Conditions"
+```
+
+`--property` picks the Google surface: `web` (default), `news`, `images`,
+`youtube`, `shopping`. `--category` takes a path or a bare name — names are
+globally unique, so `Health Conditions` and `/Health/Health Conditions` both
+work — and `--category-id` takes a numeric id. Both are validated against the taxonomy
+bundled with the release — the valid ids are a finite known set, and the API
+answers an unknown one with an opaque `500`, so there is no reason to spend a
+request finding out. Upgrading the package updates the taxonomy, which is often
+enough: it gained one category in the seven years to 2026.
+
+Both apply to `queries`, `topics` and `series --by region` **only**. A time
+series refuses them: `timelinesForHealth` accepts them and returns *unfiltered*
+data, so offering the flag would answer a filtered question with the wrong
+numbers.
+
+A parent category **contains** its descendants — `/Health` sweeps in
+`Health Conditions` and its 31 sub-categories — so the output states what was
+swept in. The taxonomy is bundled (a wrong category costs no request) and
+predates about 2012: no AI, crypto, streaming, EV or vaping category exists.
 
 ### entity
 

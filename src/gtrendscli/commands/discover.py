@@ -12,8 +12,9 @@ import json
 import click
 
 from gtrendscli import helptext
-from gtrendscli.api.endpoints import Endpoint, build_params
+from gtrendscli.api.endpoints import PROPERTIES, Endpoint, build_params
 from gtrendscli.api.parse import parse_items
+from gtrendscli.commands.filters import resolve_category
 from gtrendscli.dates import (
     ClampError,
     DateFormatError,
@@ -52,19 +53,40 @@ def _month_span(
 
 
 def _fetch_items(
-    client, endpoint: Endpoint, term: str, geo: str, span: DateRange
+    client,
+    endpoint: Endpoint,
+    term: str,
+    geo: str,
+    span: DateRange,
+    category: int | None = None,
+    trends_property: str | None = None,
 ):
     body = client.fetch(
-        endpoint, build_params(endpoint, terms=[term], geo=geo, span=span)
+        endpoint,
+        build_params(
+            endpoint,
+            terms=[term],
+            geo=geo,
+            span=span,
+            category=category,
+            trends_property=trends_property,
+        ),
     )
     return parse_items(body)
 
 
-def _render(rows: list[dict], header: list[str], warnings: list[str]) -> None:
+def _render(
+    rows: list[dict],
+    header: list[str],
+    warnings: list[str],
+    notes: list[str] | None = None,
+) -> None:
     for line in header:
         click.echo(f"# {one_line(line)}")
     for warning in warnings:
         click.echo(f"# warning: {one_line(warning)}")
+    for note in notes or []:
+        click.echo(f"# note: {one_line(note)}")
 
     columns = ["title", "value"] + (
         ["mid"] if any("mid" in r for r in rows) else []
@@ -111,6 +133,16 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
     )
     @click.option("--to", "date_to", help=helptext.DATE_TO)
     @click.option("--rising", is_flag=True, help="Rising rather than top.")
+    @click.option("--category", help=helptext.CATEGORY)
+    @click.option(
+        "--category-id", type=click.IntRange(min=0), help=helptext.CATEGORY_ID
+    )
+    @click.option(
+        "--property",
+        "trends_property",
+        type=click.Choice(sorted(PROPERTIES)),
+        help=helptext.PROPERTY,
+    )
     @click.option(
         "--vs",
         "versus",
@@ -137,6 +169,9 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
         date_from,
         date_to,
         rising,
+        category,
+        category_id,
+        trends_property,
         versus,
         limit,
         as_json,
@@ -161,6 +196,8 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
         endpoint = rising_endpoint if rising else top
         warnings = [w for w in [free_text_warning([term])] if w]
 
+        chosen, category_label, notes = resolve_category(category, category_id)
+
         try:
             span, dropped = _month_span(date_from, date_to)
             warnings += [
@@ -169,7 +206,9 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
                 else warning
                 for warning in dropped
             ]
-            rows = _fetch_items(client, endpoint, term, geo, span)
+            rows = _fetch_items(
+                client, endpoint, term, geo, span, chosen, trends_property
+            )
 
             comparison = None
             other = span
@@ -182,7 +221,9 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
                     f"comparison window {other.start}..{other.end}: {warning}"
                     for warning in other_dropped
                 ]
-                comparison = _fetch_items(client, endpoint, term, geo, other)
+                comparison = _fetch_items(
+                    client, endpoint, term, geo, other, chosen, trends_property
+                )
                 if fresh := freshness_warning(other.end, today=today_utc()):
                     warnings.append(f"comparison window: {fresh}")
         except (DateFormatError, ClampError, ValueError) as exc:
@@ -223,6 +264,8 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
                             "date_start": span.start.isoformat(),
                             "date_end": span.end.isoformat(),
                             "granularity": "month",
+                            "category": category_label,
+                            "property": trends_property or "web",
                             "comparison_start": (
                                 other.start.isoformat() if versus else None
                             ),
@@ -230,7 +273,8 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
                                 other.end.isoformat() if versus else None
                             ),
                         },
-                        "warnings": [*warnings, MONTH_NOTE],
+                        "warnings": warnings,
+                        "notes": [*notes, MONTH_NOTE],
                         "items": rows,
                         "comparison": comparison,
                     },
@@ -246,7 +290,8 @@ Month-granular: a range containing no whole month is rejected (exit 1).""",
                 f"term: {term}  geo: {geo}  endpoint: {endpoint.value}",
                 f"covering: {span.start}..{span.end}",
             ],
-            [*warnings, MONTH_NOTE],
+            warnings,
+            [*notes, MONTH_NOTE],
         )
 
         if comparison is not None:

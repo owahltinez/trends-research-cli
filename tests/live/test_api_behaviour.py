@@ -316,3 +316,89 @@ def test_a_bare_number_is_accepted_as_a_nielsen_dma(fetch):
 
     assert status == 200
     assert len(body["lines"][0]["points"]) == 3
+
+
+def test_property_changes_the_answer_on_the_restriction_family(fetch):
+    """Why `--property` exists: the vertical picks different data."""
+
+    def regions(prop):
+        _, body = fetch(
+            Endpoint.REGIONS,
+            build_params(
+                Endpoint.REGIONS,
+                terms=[TERM],
+                geo="US",
+                span=DateRange(date(2025, 1, 1), date(2025, 3, 31)),
+                trends_property=prop,
+            ),
+        )
+        return {r["regionCode"]: r["value"] for r in body["regions"]}
+
+    assert regions("web") != regions("news"), "the vertical must matter"
+    assert regions("news") != regions("youtube")
+
+
+def test_timelines_accepts_property_and_category_but_ignores_them(fetch):
+    """The reason `series` refuses these flags rather than forwarding them.
+
+    A 200 proves nothing here: the endpoint returns identical values for every
+    property and category, including a category id that 500s on `regions`.
+    """
+
+    def timeline(extra):
+        params = build_params(
+            Endpoint.TIMELINES,
+            terms=[TERM],
+            geo="US",
+            span=DateRange(date(2025, 7, 1), date(2025, 7, 4)),
+            interval=Interval.DAY,
+        )
+        status, body = fetch(Endpoint.TIMELINES, params + extra)
+        assert status == 200
+        return [p["value"] for p in body["lines"][0]["points"]]
+
+    plain = timeline([])
+    assert timeline([("restrictions.property", "news")]) == plain
+    assert timeline([("restrictions.category", "184")]) == plain
+    assert timeline([("restrictions.category", "99999999")]) == plain
+
+
+def test_an_unknown_category_is_rejected_by_the_restriction_family(fetch):
+    """So local validation saves a request, and a 500 here is a caller error."""
+    status, _ = fetch(
+        Endpoint.REGIONS,
+        build_params(
+            Endpoint.REGIONS,
+            terms=[TERM],
+            geo="US",
+            span=DateRange(date(2025, 1, 1), date(2025, 3, 31)),
+            category=88888,
+        ),
+    )
+
+    assert status == 500, "a caller error reported as a server error, again"
+
+
+def test_a_parent_category_includes_its_descendants(fetch):
+    """The containment that makes the vendored tree worth keeping."""
+
+    def queries(category):
+        _, body = fetch(
+            Endpoint.TOP_QUERIES,
+            build_params(
+                Endpoint.TOP_QUERIES,
+                terms=["batman"],
+                geo="US",
+                span=DateRange(date(2025, 1, 1), date(2025, 6, 30)),
+                category=category,
+            ),
+        )
+        return {i["title"] for i in body.get("item", [])}
+
+    comics = queries(318)
+    cartoons = queries(319)
+    parent = queries(316)
+
+    assert parent & (comics | cartoons), (
+        "the parent must draw on the children beneath it"
+    )

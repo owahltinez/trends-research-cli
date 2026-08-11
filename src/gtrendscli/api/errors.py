@@ -52,16 +52,35 @@ def _bad_request(endpoint: Endpoint) -> str:
 
 
 def _server_error(endpoint: Endpoint) -> str:
-    # Verified live: a sub-month range on a month-granular endpoint answers
-    # 500 not 400, so the likeliest cause is a caller mistake, not an outage.
-    if not spec_for(endpoint).day_granular:
-        return (
-            f"{endpoint.value} returned 500, which this endpoint does for a "
-            f"range shorter than a whole month. Widen the range to cover at "
-            f"least one whole month."
+    """Name the caller mistakes this API reports as a server error.
+
+    Verified live: both a sub-month range and an unknown category answer 500
+    rather than 400, so the likeliest cause is something the caller sent, not
+    an outage. Listing only one of them sends people hunting the wrong bug.
+    """
+    spec = spec_for(endpoint)
+
+    causes = []
+    if not spec.day_granular:
+        causes.append(
+            "a date range shorter than a whole month (widen it to cover at "
+            "least one)"
+        )
+    if spec.date_prefix == "restrictions":
+        causes.append(
+            "a category id that does not exist -- `--category` is checked "
+            "against the bundled taxonomy, but `--category-id` is sent as "
+            "given, so confirm it with `gtrends categories --show <id>`"
         )
 
-    return f"{endpoint.value} returned 500."
+    if not causes:
+        return f"{endpoint.value} returned 500."
+
+    listed = "; or ".join(causes)
+    return (
+        f"{endpoint.value} returned 500. This endpoint reports caller "
+        f"mistakes that way, so the likely cause is {listed}."
+    )
 
 
 def diagnose(status: int, endpoint: Endpoint) -> str:

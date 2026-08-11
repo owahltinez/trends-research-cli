@@ -119,3 +119,27 @@ def test_requests_are_throttled_to_the_documented_rate_limit():
 
     assert slept and all(delay > 0 for delay in slept)
     assert max(slept) <= 0.5
+
+
+def test_a_500_names_an_unknown_category_as_well_as_a_short_range():
+    """Both are caller mistakes this API reports as a server error; naming
+    only one sends people hunting the wrong bug."""
+    client, _ = client_with(Response(500, None))
+
+    with pytest.raises(ApiError) as caught:
+        client.fetch(Endpoint.TOP_QUERIES, PARAMS)
+
+    message = str(caught.value)
+    assert "whole month" in message
+    assert "category id that does not exist" in message
+    assert "--category-id" in message
+
+
+def test_a_500_on_the_timelines_endpoint_mentions_neither():
+    """It is day-granular and ignores categories, so neither cause applies."""
+    client, _ = client_with(Response(500, None))
+
+    with pytest.raises(ApiError) as caught:
+        client.fetch(Endpoint.TIMELINES, PARAMS)
+
+    assert "whole month" not in str(caught.value)

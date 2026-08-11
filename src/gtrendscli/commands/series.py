@@ -6,7 +6,8 @@ import click
 
 from gtrendscli import helptext
 from gtrendscli.api.client import Client
-from gtrendscli.api.endpoints import Endpoint
+from gtrendscli.api.endpoints import PROPERTIES, Endpoint
+from gtrendscli.commands.filters import resolve_category
 from gtrendscli.dates import (
     ClampError,
     DateFormatError,
@@ -66,10 +67,22 @@ REGION_NOTES = [
 
 
 def _by_region(
-    client: Client, terms: list[str], geo: str, span: DateRange
+    client: Client,
+    terms: list[str],
+    geo: str,
+    span: DateRange,
+    category: int | None = None,
+    trends_property: str | None = None,
 ) -> tuple[list[Record], DateRange, list[str]]:
     # No clamping: `regions` honours full dates at any range length.
-    records = fetch_regions(client, terms=terms, geo=geo, span=span)
+    records = fetch_regions(
+        client,
+        terms=terms,
+        geo=geo,
+        span=span,
+        category=category,
+        trends_property=trends_property,
+    )
 
     # These hold whatever the data says, so they are notes rather than
     # warnings; as warnings they made `--strict` fail on flawless data.
@@ -235,6 +248,16 @@ exit codes.""",
     help="Grouping besides time.",
 )
 @click.option("--years", help="With --by year: 2021-2026 or 2021,2023,2026.")
+@click.option("--category", help=helptext.CATEGORY)
+@click.option(
+    "--category-id", type=click.IntRange(min=0), help=helptext.CATEGORY_ID
+)
+@click.option(
+    "--property",
+    "trends_property",
+    type=click.Choice(sorted(PROPERTIES)),
+    help=helptext.PROPERTY,
+)
 @click.option(
     "--summary",
     "how",
@@ -252,6 +275,9 @@ def series(
     interval: str,
     by_axis: str,
     years: str | None,
+    category: str | None,
+    category_id: int | None,
+    trends_property: str | None,
     how: str | None,
     **output: object,
 ) -> None:
@@ -269,6 +295,19 @@ def series(
     client = require_client(obj)
     resolution, by = Interval(interval), By(by_axis)
     _validate(by, resolution, how, years)
+
+    # `timelinesForHealth` accepts a category or property and silently ignores
+    # it, so only the regions breakdown can honour them.
+    if by is not By.REGION and (
+        category is not None or category_id is not None or trends_property
+    ):
+        raise click.UsageError(
+            "--category, --category-id and --property only apply to "
+            "`--by region`: the time-series endpoint accepts them and returns "
+            "unfiltered data, so this tool refuses rather than mislabel it"
+        )
+
+    chosen, category_label, notes = resolve_category(category, category_id)
 
     warnings = [
         warning for warning in [free_text_warning(list(terms))] if warning
@@ -289,7 +328,7 @@ def series(
             span = parse_range(date_from, date_to, today=today_utc())
             if by is By.REGION:
                 records, covered, dropped = _by_region(
-                    client, list(terms), geo, span
+                    client, list(terms), geo, span, chosen, trends_property
                 )
             else:
                 records, covered, dropped = _by_date(
@@ -326,11 +365,13 @@ def series(
         records=records,
         by=by,
         warnings=warnings,
-        notes=REGION_NOTES if by is By.REGION else [],
+        notes=(REGION_NOTES if by is By.REGION else []) + notes,
         meta=stamp(
             geo=geo,
             interval=resolution.value,
             by=by.value,
+            category=category_label,
+            property=trends_property or "web",
             endpoint=(
                 Endpoint.REGIONS.value
                 if by is By.REGION

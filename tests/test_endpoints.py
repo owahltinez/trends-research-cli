@@ -224,3 +224,107 @@ def test_a_control_character_in_geo_is_refused():
             span=JULY,
             interval=Interval.DAY,
         )
+
+
+# --- category and property ---------------------------------------------------
+
+
+def test_restriction_family_endpoints_carry_category_and_property():
+    params = dict(
+        build_params(
+            Endpoint.TOP_QUERIES,
+            terms=["/m/0cycc"],
+            geo="US",
+            span=JULY,
+            category=419,
+            trends_property="news",
+        )
+    )
+
+    assert params["restrictions.category"] == "419"
+    assert params["restrictions.property"] == "news"
+
+
+def test_regions_carries_them_too():
+    params = dict(
+        build_params(
+            Endpoint.REGIONS,
+            terms=["/m/0cycc"],
+            geo="US",
+            span=JULY,
+            category=45,
+            trends_property="youtube",
+        )
+    )
+
+    assert params["restrictions.category"] == "45"
+    assert params["restrictions.property"] == "youtube"
+
+
+def test_shopping_is_translated_to_the_api_legacy_name():
+    """The API still calls it `froogle`; nobody else has for fifteen years."""
+    params = dict(
+        build_params(
+            Endpoint.REGIONS,
+            terms=["/m/0cycc"],
+            geo="US",
+            span=JULY,
+            trends_property="shopping",
+        )
+    )
+
+    assert params["restrictions.property"] == "froogle"
+
+
+def test_web_is_sent_as_the_empty_string_the_api_expects():
+    params = dict(
+        build_params(
+            Endpoint.REGIONS,
+            terms=["/m/0cycc"],
+            geo="US",
+            span=JULY,
+            trends_property="web",
+        )
+    )
+
+    assert params["restrictions.property"] == ""
+
+
+def test_timelines_refuses_them_because_it_would_ignore_them():
+    """Verified live: `timelinesForHealth` returns identical values for every
+    category and property, including nonsense ones. Accepting the flag would
+    hand back a confident, unfiltered answer to a filtered question."""
+    for extra in ({"category": 419}, {"trends_property": "news"}):
+        with pytest.raises(ValueError, match="ignores"):
+            build_params(
+                Endpoint.TIMELINES,
+                terms=["/m/0cycc"],
+                geo="US",
+                span=JULY,
+                interval=Interval.DAY,
+                **extra,
+            )
+
+
+def test_category_zero_is_sent_since_it_equals_no_filter():
+    """0 is 'All categories'; sending it and omitting it are equivalent."""
+    params = dict(
+        build_params(
+            Endpoint.REGIONS,
+            terms=["/m/0cycc"],
+            geo="US",
+            span=JULY,
+            category=0,
+        )
+    )
+
+    assert params["restrictions.category"] == "0"
+
+
+def test_neither_appears_when_not_asked_for():
+    params = dict(
+        build_params(Endpoint.REGIONS, terms=["/m/0cycc"], geo="US", span=JULY)
+    )
+
+    assert "restrictions.category" not in params
+    assert "restrictions.property" not in params

@@ -26,6 +26,16 @@ Params = list[tuple[str, str]]
 MAX_TERMS = 30
 """Documented ceiling on `terms` per request."""
 
+# The API still calls Shopping by its 2006 name. Web search is the empty
+# string, which is how the picker sends "no property filter".
+PROPERTIES = {
+    "web": "",
+    "news": "news",
+    "images": "images",
+    "youtube": "youtube",
+    "shopping": "froogle",
+}
+
 
 class Endpoint(StrEnum):
     """Every endpoint the tool talks to. Only ``regions`` is documented."""
@@ -167,6 +177,46 @@ def _geo_params(spec: Spec, geo: str) -> Params:
     return [(key, geo)]
 
 
+def _filter_params(
+    endpoint: Endpoint,
+    spec: Spec,
+    category: int | None,
+    trends_property: str | None,
+) -> Params:
+    """Category and property, which only the restriction family honours.
+
+    `timelinesForHealth` accepts both and silently ignores them -- verified
+    live: identical values for every category and property, including ids that
+    return 500 elsewhere. Passing them there would answer a filtered question
+    with unfiltered data, so it is refused rather than forwarded.
+    """
+    asked = {"--category": category, "--property": trends_property}
+    given = [flag for flag, value in asked.items() if value is not None]
+
+    if not given:
+        return []
+
+    if spec.date_prefix != "restrictions":
+        raise ValueError(
+            f"{endpoint.value} ignores {' and '.join(given)} -- it accepts "
+            f"them and returns unfiltered data, so this tool refuses them "
+            f"rather than report a filter that was never applied"
+        )
+
+    params: Params = []
+    if category is not None:
+        params.append(("restrictions.category", str(category)))
+    if trends_property is not None:
+        if trends_property not in PROPERTIES:
+            raise ValueError(
+                f"unknown property {trends_property!r}; choose one of "
+                f"{', '.join(sorted(PROPERTIES))}"
+            )
+        params.append(("restrictions.property", PROPERTIES[trends_property]))
+
+    return params
+
+
 def build_params(
     endpoint: Endpoint,
     *,
@@ -174,6 +224,8 @@ def build_params(
     geo: str,
     span: DateRange,
     interval: Interval | None = None,
+    category: int | None = None,
+    trends_property: str | None = None,
 ) -> Params:
     """Build the query parameters for one endpoint call.
 
@@ -189,4 +241,8 @@ def build_params(
             raise ValueError(f"{endpoint.value} requires an interval")
         params.append(("timelineResolution", interval.value))
 
-    return params + _geo_params(spec, geo)
+    return (
+        params
+        + _geo_params(spec, geo)
+        + _filter_params(endpoint, spec, category, trends_property)
+    )

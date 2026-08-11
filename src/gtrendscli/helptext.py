@@ -31,3 +31,20 @@ JSON = (
 )
 
 PLAIN = "Bare values, one per line, for shell composition."
+
+CATEGORY = (
+    'Restrict to a category by path or name, e.g. "/Health/Health '
+    'Conditions" or "Health Conditions". A leading / is optional. A parent '
+    "includes everything beneath it. Run `gtrends categories --find <text>`."
+)
+
+CATEGORY_ID = (
+    "Restrict to a category by numeric id, e.g. 419. Checked against the "
+    "taxonomy bundled with this release, like --category."
+)
+
+PROPERTY = (
+    "Which Google surface to measure: web (default), news, images, youtube or "
+    "shopping. Not available on a time series -- the API accepts it there and "
+    "silently ignores it."
+)

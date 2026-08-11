@@ -81,6 +81,7 @@ COMMANDS
   gtrends series <id...>              the numbers
   gtrends queries <id>                strings people typed alongside
   gtrends topics <id>                 entities that co-occur (returns IDs)
+  gtrends categories                  look up a category for --category
   gtrends check censoring|variance|vs-public
 
   `series` groups with --by:
@@ -96,6 +97,30 @@ COMMANDS
   `queries` and `topics` are month-granular -- a hard API limit, so a result
   is never evidence about a specific week. `series --by region` has no such
   limit and accepts any range down to a single day.
+
+CATEGORY AND PROPERTY
+  --property web|news|images|youtube|shopping picks which Google surface to
+  measure. --category takes a path or a name, e.g. "/Health/Health Conditions"
+  or "Health Conditions"; a leading / is optional and names are unique.
+  --category-id takes a numeric id. Both forms are checked against the
+  taxonomy bundled with this release, because the valid ids are a finite known
+  set and the API answers an unknown one with an opaque 500. The taxonomy is
+  updated by upgrading the package, which is often enough: it gained one
+  category in the seven years to 2026.
+
+  Both apply to `queries`, `topics` and `series --by region` ONLY. A time
+  series refuses them, because `timelinesForHealth` accepts them and returns
+  unfiltered data -- a filtered question answered with the wrong numbers.
+
+  A parent category CONTAINS its descendants: choosing /Health sweeps in
+  Health Conditions and everything under that. The output says what it swept
+  in. For the same reason, a category and its own ancestor are not independent
+  and must not be compared as if they were.
+
+  The taxonomy is bundled, so a wrong category costs no request. It also
+  predates about 2012 -- its newest entries are Blu-Ray players, and there is
+  no category for AI, cryptocurrency, streaming, electric vehicles or vaping.
+  Browse it with `gtrends categories --find <text>`.
 
 OUTPUT
   Human table by default. `series` takes the full set -- --json, --csv,

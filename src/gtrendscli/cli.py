@@ -9,6 +9,7 @@ import click
 from gtrendscli import __version__
 from gtrendscli.api.client import Client
 from gtrendscli.api.transport import Urllib3Transport
+from gtrendscli.commands.category import categories
 from gtrendscli.commands.check import check
 from gtrendscli.commands.discover import queries, topics
 from gtrendscli.commands.doctor import doctor
@@ -68,5 +69,15 @@ def main(ctx: click.Context, api_key: str | None, raw_dir: Path | None) -> None:
         ctx.obj = exc
 
 
-for command in (guide, doctor, skill, entity, series, queries, topics, check):
+for command in (
+    guide,
+    doctor,
+    skill,
+    categories,
+    entity,
+    series,
+    queries,
+    topics,
+    check,
+):
     main.add_command(command)

@@ -15,7 +15,7 @@ cp .env.example .env        # then fill in TRENDS_API_KEY
 ```sh
 uv run pytest                       # offline; fast, no network
 uv run pytest -m live               # hits the real API; needs TRENDS_API_KEY
-readability check src tests --fix
+readability check src tests scripts --fix
 ```
 
 ## How this project treats the API
@@ -88,6 +88,18 @@ uv run pytest tests/test_skill.py        # our own constraints
 ```
 
 Keep it thin. It routes to `gtrends guide`; it does not restate it.
+
+## Vendored data
+
+`src/gtrendscli/data/categories.json` is the Google Trends category taxonomy,
+shipped with the release and never fetched at runtime. It gained one category
+in the seven years to 2026, so a refresh path would be a network fetch, a cache
+and its failure modes in exchange for something that happens less often than a
+release.
+
+Regenerate with `uv run scripts/fetch_categories.py`, review the diff, and ship
+a version. The script is stdlib-only and carries PEP 723 metadata, so it runs
+from a bare checkout with no project environment.
 
 ## Conventions
 
